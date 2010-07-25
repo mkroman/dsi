@@ -31,7 +31,7 @@ module DSI
       501 => :ERR_UMODEUNKNOWNFLAG,   502 => :ERR_USERSDONTMATCH
     }
 
-    LinePattern = /^(?::([^ ]+) +)?([^:][^ ]*)(?: ([^: ][^ ]*))*(?: :(.*))? *\r|\n$/u
+    LinePattern = /^(?::([^ ]+) +)?([^:][^ ]*)(?: ([^: ][^ ]*))*(?: :(.*))? *[\r\n]+$/u
 
     def initialize controller
       @delegate  = controller
