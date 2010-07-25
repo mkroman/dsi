@@ -1,7 +1,6 @@
-== DSI Example
-
+Example
+-------
     #!/usr/bin/env ruby
-    # encoding: utf-8
     require 'dsi'
     require 'dsi/extensions'
 
@@ -41,11 +40,10 @@
 
     end
     
-== DSI Extension Example
-  # encoding: utf-8
+Extension Example
+-----------------
+    @triggers = %w{.d .t .time .date}
 
-  @triggers = %w{.d .t .time .date}
-
-  def init user, channel, message
-    say channel, "> #{%x{date}}" ^ :cyan
-  end
+    def init user, channel, message
+      say channel, "> #{%x{date}}" ^ :cyan
+    end
