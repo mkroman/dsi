@@ -31,7 +31,7 @@ module DSI
       501 => :ERR_UMODEUNKNOWNFLAG,   502 => :ERR_USERSDONTMATCH
     }
 
-    LinePattern = /^(?::([^ ]+) +)?([^:][^ ]*)(?: ([^: ][^ ]*))*(?: :(.*))? *[\r\n]+$/u
+    LinePattern = /^(?::([^ ]+) +)?([^:][^ ]*)(?: ([^: ][^ ]*))*(?: :(.*))? *$/u
 
     def initialize controller
       @delegate  = controller
@@ -68,7 +68,7 @@ module DSI
 
     def main_loop
       until @socket.eof? do
-        prefix, command, *params = parse(line = @socket.gets)
+        prefix, command, *params = parse(line = @socket.gets.strip)
         params.compact!
         
         prefix = (prefix.nil? ? prefix : prefix.mask)
@@ -87,10 +87,10 @@ module DSI
     
     def got_privmsg prefix, channel, message
       if me? channel
-        emit :private_message, prefix, message.strip
+        emit :private_message, prefix, message
       else
         channel, user = find_user(channel, prefix)
-        emit :message, user, channel, message.strip
+        emit :message, user, channel, message
       end
     end
     
