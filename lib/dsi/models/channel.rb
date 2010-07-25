@@ -28,6 +28,11 @@ module DSI
       user
     end
     
+    def op user; @delegate.mode(name, user.nickname, "+o") end
+    def voice user; @delegate.mode(name, user.nickname, "+v") end
+    def admin user; @delegate.mode(name, user.nickname, "+a") end
+    def halfop user; @delegate.mode(name, user.nickname, "+h") end
+    
     def kick user, reason = nil
       @delegate.kick @name, user.nickname, reason
     end

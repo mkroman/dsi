@@ -32,6 +32,7 @@ module DSI
 
     def self.reload
       @@extensions.each &:unload!
+      @@extensions.clear
       self.autoload
     end
 

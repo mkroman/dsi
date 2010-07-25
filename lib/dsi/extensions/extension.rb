@@ -19,11 +19,7 @@ module DSI
       if command.nil?
         true
       else
-        if @triggers.nil?
-          true
-        else
-          @triggers.include? command
-        end
+        @triggers.nil? ? true : @triggers.include?(command)
       end
     end
 
@@ -34,7 +30,6 @@ module DSI
     end
 
     def unload!
-      Extensions.delete self
       exec :unloaded
     end
     

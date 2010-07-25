@@ -26,6 +26,11 @@ module DSI
     def kick reason = nil
       @channel.kick self, reason
     end
+    
+    def op!; @channel.op(self) end
+    def admin!; @channel.admin(self) end
+    def voice!; @channel.voice(self) end
+    def halfop!; @channel.halfop(self) end
 
     def update value
       @hostmask = value

@@ -48,6 +48,10 @@ module DSI
       end
     end
     
+    def mode channel, nickname, mode
+      @connection.transmit :MODE, "#{channel} #{mode} #{nickname}"
+    end
+    
     def kick channel, nickname, reason
       @connection.transmit :KICK, "#{channel} #{nickname} :#{reason}"
     end

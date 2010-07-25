@@ -87,10 +87,10 @@ module DSI
     
     def got_privmsg prefix, channel, message
       if me? channel
-        emit :private_message, prefix, message
+        emit :private_message, prefix, message.strip
       else
         channel, user = find_user(channel, prefix)
-        emit :message, user, channel, message
+        emit :message, user, channel, message.strip
       end
     end
     
