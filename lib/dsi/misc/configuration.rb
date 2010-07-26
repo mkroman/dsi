@@ -8,6 +8,7 @@ module DSI
       @nickname = options[:nickname]
       @username = options[:username] || @nickname
       @realname = options[:realname] || @username
+      @password = options[:password]
       @hostname = options[:hostname] or raise "no hostname"
     end
 
