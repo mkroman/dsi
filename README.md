@@ -45,5 +45,5 @@ Extension Example
     @triggers = %w{.d .t .time .date}
 
     def init user, channel, message
-      say channel, "> #{%x{date}}" ^ :cyan
+      channel.say "> #{%x{date}}" ^ :cyan
     end
