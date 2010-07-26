@@ -114,7 +114,7 @@ module DSI
       unless me? prefix
         channel, user = find_user(channel, prefix)
         channel.delete user
-        emit :part, user, channel
+        emit :part, channel, user
       end
     end
     
