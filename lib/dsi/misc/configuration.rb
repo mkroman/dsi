@@ -1,6 +1,7 @@
 module DSI
   class Configuration
-    attr_accessor :nickname, :username, :realname, :hostname, :oldnickname
+    attr_accessor :nickname, :username, :realname, :hostname, :password,
+    :oldnickname
 
     def initialize options
       @options  = options
