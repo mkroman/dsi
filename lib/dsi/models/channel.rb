@@ -2,60 +2,54 @@
 
 module DSI
   class Channel
-    attr_accessor :name, :users
-    @@channels = []
+    attr_accessor :name, :users, :delegate
 
     def initialize name, delegate
       @name     = name
-      @users    = Array.new
+      @users    = []
       @delegate = delegate
-      @@channels << self
+      
+      Channels.add self
     end
 
-    def say *messages
-      messages.each do |message|
-        @delegate.say name, message
-      end
-    end
-
-    def << user
+    # Methods only used by DSI.
+    def add user
       user.channel = self
-      @users << user
-    end
-
-    def remove user
-      @users.delete user
-      user
+      @users.push user
+      self
     end
     
-    def op user; @delegate.mode(name, user.nickname, "+o") end
-    def voice user; @delegate.mode(name, user.nickname, "+v") end
-    def admin user; @delegate.mode(name, user.nickname, "+a") end
-    def halfop user; @delegate.mode(name, user.nickname, "+h") end
+    def delete user
+      users.delete user
+      self
+    end
     
-    def kick user, reason = nil
-      @delegate.kick @name, user.nickname, reason
+    # Channel interaction
+    def say message; @delegate.say name, message end
+    def op user;     @delegate.mode name, user.nickname, "+o" end
+    def voice user;  @delegate.mode name, user.nickname, "+v" end
+    def admin user;  @delegate.mode name, user.nickname, "+a" end
+    def halfop user; @delegate.mode name, user.nickname, "+h" end
+    
+    def kick user, reason = "no reason"
+      @delegate.kick name, user.nickname, reason
     end
 
-    def [] hostmask
-      @users.select{ |user| user.nickname == hostmask.nickname }.first
+    # "Finders"
+    def user prefix
+      @users.select{ |user| user.nickname == prefix.nickname }.first
     end
 
-    def user? hostmask
-      !@users.select{ |user| user.nickname == hostmask.nickname }.empty?
+    def user? prefix
+      !@users.select{ |user| user.nickname == prefix.nickname }.empty?
+    end
+    
+    def to_s
+      %{<#{self.class.name}:#{name}>}
     end
 
     def inspect
-      %{<DSI::Channel @name="#{name}">}
+      %{<#{self.class.name} @name="#{name}">}
     end
-
-    def self.list
-      @@channels
-    end
-
-    def self.[] name
-      @@channels.select{ |channel| channel.name == name }.first
-    end
-
   end
 end

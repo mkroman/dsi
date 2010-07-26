@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'dsi/models/user'
 require 'dsi/models/channel'
+require 'dsi/models/channels'
 require 'dsi/misc/logging'
 require 'dsi/misc/configuration'
 require 'dsi/models/hostmask'

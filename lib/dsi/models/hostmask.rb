@@ -7,6 +7,14 @@ module DSI
     def initialize mask
       @nickname, @username, @hostname = *mask
     end
+    
+    def to_s
+      %{<#{self.class.name}:#{@nickname}>}
+    end
+    
+    def inspect
+      %{<#{self.class.name} @nickname="#{@nickname}" @username="#{@username}" hostname="#{@hostname}">}
+    end
 
     def self.parse prefix
       result = prefix.match MaskPattern

@@ -49,12 +49,12 @@ module DSI
 
       register
       @connected = true
-      @delegate.dispatch :connect
+      emit :connection
 
       begin
         main_loop
       rescue Interrupt
-        @delegate.dispatch :disconnect, "Interrupted by user."
+        emit :disconnecting, "Interrupted by user."
       end
     end
 
@@ -63,12 +63,12 @@ module DSI
 
       @socket.close
       @connected = false
-      @delegate.dispatch :disconnect, "Terminated by user"
+      emit :disconnecting, "Terminated by user"
     end
 
     def main_loop
       until @socket.eof? do
-        prefix, command, *params = parse(line = @socket.gets.strip)
+        prefix, command, *params = parse(@socket.gets.strip)
         params.compact!
         
         prefix = (prefix.nil? ? prefix : prefix.mask)
@@ -95,9 +95,7 @@ module DSI
     end
     
     def got_quit prefix, nickname, *reason
-      channels = Channel.list.select{ |channel| channel.user? prefix }
-      
-      channels.each do |channel|
+      Channels.with(prefix).each do |channel|
         user = channel[prefix]
         emit :quit, user
         channel.remove user
@@ -106,8 +104,8 @@ module DSI
     
     def got_join prefix, channel
       unless me? prefix
-        channel = Channel[channel]
-        channel << (user = User.new(prefix))
+        user = User.new prefix
+        channel = Channels[channel].add(user)
         emit :join, channel, user
       end
     end
@@ -115,26 +113,24 @@ module DSI
     def got_part prefix, channel
       unless me? prefix
         channel, user = find_user(channel, prefix)
-        channel.remove user
+        channel.delete user
         emit :part, user, channel
       end
     end
     
     def got_353 prefix, name, nicks
-      channel = Channel[name] || Channel.new(name, @delegate)
+      channel = Channels[name] || Channel.new(name, @delegate)
       
       nicks.split.each do |nick|
         unless me? nick
-          channel << User.new("#{nick}!nil@nil".mask)
+          channel.add User.new("#{nick}!nil@nil".mask)
         end
       end
     end
     
     def got_nick prefix, value
-      channels = Channel.list.select{ |channel| channel.user? prefix }
-      
-      channels.each do |channel|
-        user = channel[prefix]
+      Channels.with(prefix).each do |channel|
+        user = channel.user prefix
         emit :nick, channel, user, value
         user.nickname = value
       end
@@ -153,7 +149,7 @@ module DSI
       @connected
     end
 
-    private
+  private
     def parse line
       line.to_utf8!
       result = line.match LinePattern
@@ -165,9 +161,9 @@ module DSI
       end
     end
 
-    def find_user name, hostmask
-      channel = Channel[name]
-      return channel, channel[hostmask]
+    def find_user name, prefix
+      channel = Channels[name]
+      return channel, channel.user(prefix)
     end
     
     def me? who
@@ -185,7 +181,7 @@ module DSI
     def register
       transmit :PASS, @delegate.config.password if @delegate.config.password?
       transmit :NICK, @delegate.config.nickname
-      transmit :USER, "#{@delegate.config.username} na na :#{@delegate.config.realname}"
+      transmit :USER, "#{@delegate.config.username} nil nil :#{@delegate.config.realname}"
     end
 
   end

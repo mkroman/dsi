@@ -1,6 +1,5 @@
 module DSI
   class Configuration
-
     attr_accessor :nickname, :username, :realname, :hostname
 
     def initialize options
@@ -9,13 +8,6 @@ module DSI
       @username = options[:username] || @nickname
       @realname = options[:realname] || @username
       @hostname = options[:hostname] or raise "no hostname"
-      
-      [:nickname, :username, :realname, :hostname, :password].each do |name|
-        define_method name do
-          @options[name]
-        end
-      end
-      
     end
 
     def port
@@ -23,15 +15,11 @@ module DSI
     end
 
     def secure?
-      @options[:secure]
+      !@options[:secure].nil?
     end
 
     def password?
-      @options[:password]
-    end
-
-    def method_missing name, *args
-      @options[name]
+      !@options[:password].nil?
     end
 
     def debug?
