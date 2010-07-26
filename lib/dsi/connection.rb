@@ -118,6 +118,7 @@ module DSI
       end
     end
     
+    # RPL_NAMREPLY
     def got_353 prefix, name, nicks
       channel = Channels[name] || Channel.new(name, @delegate)
       
@@ -126,6 +127,18 @@ module DSI
           channel.add User.new("#{nick}!nil@nil".mask)
         end
       end
+    end
+    
+    # ERR_ERRONEUSNICKNAME
+    def got_432 prefix, nickname, *message
+      @delegate.config.nickname = @delegate.config.oldnickname
+      emit :error, Errors[432]
+    end
+    
+    # ERR_NICKNAMEINUSE
+    def got_433 prefix, nickname, *message
+      @delegate.config.nickname = @delegate.config.oldnickname
+      emit :error, Errors[433]
     end
     
     def got_nick prefix, value

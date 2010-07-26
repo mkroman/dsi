@@ -30,6 +30,7 @@ module DSI
         Extensions.delegate = self if command == :start
         Extensions.run command, *args
       end
+      
       @handlers[command.to_s].call(*args) if @handlers[command.to_s]
     end
 
@@ -54,6 +55,12 @@ module DSI
     
     def kick channel, nickname, reason
       @connection.transmit :KICK, "#{channel} #{nickname} :#{reason}"
+    end
+    
+    def nickname= value
+      @config.oldnickname = @config.nickname
+      @config.nickname = value
+      @connection.transmit :NICK, value
     end
 
     # getters
