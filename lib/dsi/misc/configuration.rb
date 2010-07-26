@@ -13,6 +13,10 @@ module DSI
     def port
       @options[:port] || secure? ? 7000 : 6667
     end
+    
+    def path
+      @options[:path]
+    end
 
     def secure?
       !@options[:secure].nil?

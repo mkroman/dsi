@@ -26,12 +26,12 @@ Example
         channel.say "Welcome to #{channel.name}, #{user.nickname}!"
       end
       
-      on :join do |channel, user|
+      on :part do |channel, user|
         debug "Aww, #{user.nickname} left #{channel.name}!"
       end
 
-      on :nick do |channel, user, nickname|
-        channel.say "#{nickname}: hvad var der galt med #{user.nickname}?"
+      on :nick do |channel, user, old_nickname|
+        channel.say "#{user.nickname}: what was wrong with #{old_nickname}?"
       end
 
       on :ready do

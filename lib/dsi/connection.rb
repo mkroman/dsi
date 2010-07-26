@@ -131,8 +131,9 @@ module DSI
     def got_nick prefix, value
       Channels.with(prefix).each do |channel|
         user = channel.user prefix
-        emit :nick, channel, user, value
-        user.nickname = value
+        oldnick = user.nickname
+        user.hostmask.nickname = value
+        emit :nick, channel, user, oldnick
       end
     end
     
