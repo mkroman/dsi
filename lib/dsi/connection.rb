@@ -1,4 +1,4 @@
-# encoding: utf-8
+
 require 'socket'
 require 'openssl'
 
@@ -30,8 +30,6 @@ module DSI
       483 => :ERR_CANTKILLSERVER,     491 => :ERR_NOOPERHOST,
       501 => :ERR_UMODEUNKNOWNFLAG,   502 => :ERR_USERSDONTMATCH
     }
-
-    LinePattern = /^(?::([^ ]+) +)?([^:][^ ]*)(?: ([^: ][^ ]*))*(?: :(.*))? *$/u
 
     def initialize controller
       @delegate  = controller
@@ -67,16 +65,14 @@ module DSI
     end
 
     def main_loop
-      until @socket.eof? do
-        prefix, command, *params = parse(@socket.gets.strip)
-        params.compact!
+      while line = @socket.gets do
+        debug "#{'←'^:green} #{line}"
+        command = Command.parse line
         
-        prefix = (prefix.nil? ? prefix : prefix.mask)
+        #debug "#{'←'^:green} #{command.name.to_s.ljust(7)^:bold} : #{command.parameters.join ' '}"
         
-        debug "#{'←'^:green} #{command.ljust(7)^:bold} : #{params.join ' '}"
-        
-        if respond_to? "got_#{command.downcase}"
-          send "got_#{command.downcase}", prefix, *params
+        if respond_to? "got_#{command.name.to_s.downcase}"
+          send "got_#{command.name.to_s.downcase}", command.prefix, command.parameters
         end
       end
     end
@@ -85,7 +81,9 @@ module DSI
       transmit :PONG, server
     end
     
-    def got_privmsg prefix, channel, message
+    def got_privmsg prefix, params
+      channel, message = params
+      
       if me? channel
         emit :private_message, prefix, message
       else
@@ -103,7 +101,9 @@ module DSI
       end
     end
     
-    def got_join prefix, channel
+    def got_join prefix, params
+      channel = params.first
+    
       unless me? prefix
         user = User.new prefix
         channel = Channels[channel].add(user)
@@ -111,7 +111,9 @@ module DSI
       end
     end
     
-    def got_part prefix, channel
+    def got_part prefix, params
+      channel = params.first
+      
       unless me? prefix
         channel, user = find_user(channel, prefix)
         channel.delete user
@@ -120,7 +122,8 @@ module DSI
     end
     
     # RPL_NAMREPLY
-    def got_353 prefix, name, nicks
+    def got_353 prefix, params
+      _, _, name, nicks = params
       channel = Channels[name] || Channel.new(name, @delegate)
       
       nicks.split.each do |nick|

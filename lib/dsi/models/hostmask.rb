@@ -1,24 +1,40 @@
 module DSI
   class Hostmask
-    attr_accessor :nickname, :username, :hostname
+    attr_accessor :nickname, :username, :hostname, :server, :type
 
-    MaskPattern = /^([^\s]+)!([^\s]+)@([a-z0-9\-\.]+)$/iu
+    Pattern = /^(\S+)!(\S+)@(\S+)$/
 
-    def initialize mask
-      @nickname, @username, @hostname = *mask
+    def initialize *hostmask
+      if hostmask.length == 3
+        @nickname, @username, @hostname = *hostmask
+      else
+        @server = hostmask.first
+      end
     end
     
     def to_s
-      "#{nickname}!#{username}@#{hostname}"
+      if nickname
+        "#{nickname}!#{username}@#{hostname}"
+      else
+        server
+      end
     end
     
     def inspect
-      %{<#{self.class.name} @nickname="#{@nickname}" @username="#{@username}" hostname="#{@hostname}">}
+      if nickname
+        %{<#{self.class.name} @nickname="#{@nickname}" @username="#{@username}" hostname="#{@hostname}">}
+      else
+        %{<#{self.class.name} @server="#{@server}">}
+      end
     end
 
     def self.parse prefix
-      result = prefix.match MaskPattern
-      result.nil? ? nil : new(result.captures)
+      if prefix =~ Pattern
+        new $1, $2, $3
+      else
+        new prefix
+      end
     end
+    
   end
 end

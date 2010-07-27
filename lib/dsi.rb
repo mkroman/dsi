@@ -2,6 +2,7 @@
 require 'dsi/models/user'
 require 'dsi/models/channel'
 require 'dsi/models/channels'
+require 'dsi/command'
 require 'dsi/misc/wildcard'
 require 'dsi/misc/logging'
 require 'dsi/misc/configuration'

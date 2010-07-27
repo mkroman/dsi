@@ -24,18 +24,17 @@ class String
   }
 
   def strip_ansi
-    self.gsub! /\033\[[\d;]+m/, ''
+    self.gsub! /\033\[[\d;]+m/u, ''
   end
 
   def to_utf8!
-    unless encoding == Encoding::UTF_8
-      force_encoding 'iso-8859-1'
-      encode! 'UTF-8'
-    end
+    p Encoding.default_internal
+    p Encoding.default_external
+    self.encode 'utf-8'
   end
 
   def colorize
-    gsub(/\033\[([\d;]+)m/) do |color|
+    gsub(/\033\[([\d;]+)m/u) do |color|
       ANSIColors[color] or ""
     end
   end
@@ -49,7 +48,7 @@ class String
   end
 
   def to_nick
-    gsub /^@|\+|~|&/, ''
+    gsub /^@|\+|~|&/u, ''
   end
 
   def mask
@@ -60,7 +59,7 @@ end
 class Exception
   def line
     backtrace = exception.backtrace.first
-    backtrace.match(/^(.+?):(\d+)(|:in `(.+)')$/)[2]
+    backtrace.match(/^(.+?):(\d+)(|:in `(.+)')$/u)[2]
   end
 end
 
