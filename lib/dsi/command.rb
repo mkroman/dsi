@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 module DSI
   class Command
     attr_accessor :prefix, :name, :parameters
@@ -17,10 +15,10 @@ module DSI
     end
     
     def self.parse data
-      matches = data.strip.match /^:(\S+) ?(\S+)(.*)/u
-      prefix, name, parameters = matches.captures
+      matches = data.strip.match /^(:(\S+) )?(\S+)(.*)/
+      _, prefix, name, parameters = matches.captures
       
-      if match = parameters.match(/(?:^:| :)(.*)$/u)
+      if match = parameters.match(/(?:^:| :)(.*)$/)
         parameters = match.pre_match.split
         parameters << match[1]
       else
@@ -28,7 +26,7 @@ module DSI
       end
       
       instance = new name
-      instance.prefix = prefix.mask
+      instance.prefix = prefix.mask if prefix
       instance.parameters = parameters
       instance
     end

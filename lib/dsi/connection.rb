@@ -1,4 +1,3 @@
-
 require 'socket'
 require 'openssl'
 
@@ -65,11 +64,10 @@ module DSI
     end
 
     def main_loop
-      while line = @socket.gets do
-        debug "#{'←'^:green} #{line}"
-        command = Command.parse line
+      until @socket.eof? do
+        command = Command.parse @socket.gets
         
-        #debug "#{'←'^:green} #{command.name.to_s.ljust(7)^:bold} : #{command.parameters.join ' '}"
+        debug "#{'<'^:green} #{command.name.to_s.ljust(7)^:bold} : #{command.parameters.join ' '}"
         
         if respond_to? "got_#{command.name.to_s.downcase}"
           send "got_#{command.name.to_s.downcase}", command.prefix, command.parameters
@@ -78,7 +76,7 @@ module DSI
     end
     
     def got_ping prefix, server
-      transmit :PONG, server
+      transmit :PONG, server.first
     end
     
     def got_privmsg prefix, params
@@ -159,7 +157,7 @@ module DSI
 
     def transmit command, params
       output = [command, params].join ' '
-      debug "#{'→'^:red} #{command.to_s.ljust(7)^:bold} : #{params}"
+      debug "#{'>'^:red} #{command.to_s.ljust(7)^:bold} : #{params}"
       @socket.puts output
     end
 
@@ -168,17 +166,6 @@ module DSI
     end
 
   private
-    def parse line
-      line.to_utf8!
-      result = line.match LinePattern
-      
-      if result
-        result.captures
-      else
-        [":local", "ERROR", "Could not parse line"]
-      end
-    end
-
     def find_user name, prefix
       channel = Channels[name]
       return channel, channel.user(prefix)
