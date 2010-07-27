@@ -19,6 +19,21 @@ module DSI
     def path
       @options[:path]
     end
+    
+    def admins
+      if @options[:admins]
+        [@options[:admins]].flatten
+      else
+        []
+      end
+    end
+    
+    def admin? hostmask
+      admins.each do |admin|
+        return true if Wildcard.match(admin.to_s, hostmask.to_s, true)
+      end
+      false
+    end
 
     def secure?
       !@options[:secure].nil?

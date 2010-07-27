@@ -12,6 +12,10 @@ module DSI
     def nickname; hostmask.nickname.to_nick end
     def username; hostmask.username end
     def hostname; hostmask.hostname end
+    
+    def admin?
+      not @channel.delegate.config.admin?(hostmask).nil?
+    end
 
     # User interaction
     def op!;     @channel.op self end

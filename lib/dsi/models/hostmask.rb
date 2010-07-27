@@ -9,7 +9,7 @@ module DSI
     end
     
     def to_s
-      %{<#{self.class.name}:#{@nickname}>}
+      "#{nickname}!#{username}@#{hostname}"
     end
     
     def inspect

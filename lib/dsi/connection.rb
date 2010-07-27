@@ -90,15 +90,16 @@ module DSI
         emit :private_message, prefix, message
       else
         channel, user = find_user(channel, prefix)
+        user.hostmask = prefix
         emit :message, user, channel, message
       end
     end
     
     def got_quit prefix, nickname, *reason
       Channels.with(prefix).each do |channel|
-        user = channel[prefix]
+        user = channel.user(prefix)
         emit :quit, user
-        channel.remove user
+        channel.delete user
       end
     end
     
