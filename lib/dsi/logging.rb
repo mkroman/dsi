@@ -1,5 +1,4 @@
 # encoding: utf-8
-require 'dsi/misc/ansi_escape'
 
 module DSI
   module Logging

@@ -14,11 +14,7 @@ module DSI
     end
 
     def connect
-      @connection.establish
-    end
-
-    def disconnect
-      @connection.terminate
+      @connection.connect
     end
 
     def on command, &block
@@ -34,7 +30,7 @@ module DSI
       @handlers[command.to_s].call(*args) if @handlers[command.to_s]
     end
 
-    # general irc commands
+    # IRC API
     def join name
       @connection.transmit :JOIN, name.to_chan
     end

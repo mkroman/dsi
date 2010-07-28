@@ -1,22 +1,19 @@
 # encoding: utf-8
-require 'dsi/models/user'
-require 'dsi/models/channel'
-require 'dsi/models/channels'
+require 'socket'
+require 'ostruct'
+require 'dsi/ansi'
+require 'dsi/user'
+require 'dsi/logging'
+require 'dsi/client'
+require 'dsi/channel'
+require 'dsi/message'
 require 'dsi/command'
-require 'dsi/misc/wildcard'
-require 'dsi/misc/logging'
-require 'dsi/misc/configuration'
-require 'dsi/models/hostmask'
-require 'dsi/controller'
-require 'dsi/misc/enhancements'
+require 'dsi/wildcard'
+require 'dsi/handling'
+require 'dsi/connection'
+require 'dsi/enhancements'
+require 'dsi/configuration'
 
 module DSI
-  VERSION = '1.3.0'
-
-  def self.connect options, &block
-    instance = Controller.new options
-    instance.instance_eval &block
-    instance.dispatch :start
-    instance.connect
-  end
+  VERSION = '0.0.1'
 end
