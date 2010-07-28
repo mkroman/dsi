@@ -1,9 +1,11 @@
 class String
+  ModePattern = /[^@|\+|!|&|~|%].*/
+
   # Convert a string into a OpenStruct instance containing :nickname, :username
   # and :hostname if it's a user hostname, otherwise it will contain :server.
   def to_mask
     if self =~ /^(\S+)!(\S+)@(\S+)$/
-      OpenStruct.new username: $2, hostname: $3, nickname: $1[/[\w]+/] # FIXME: "+mk^^"[/[\w]+/] # => "mk"
+      OpenStruct.new username: $2, hostname: $3, nickname: $1[ModePattern]
     else
       OpenStruct.new server: self
     end

@@ -3,9 +3,8 @@ config do |c|
   c.author  = "DSI <dsi@maero.dk>"
   c.version = "0.0.1"
   
-  bind :join, :handle_join
   bind :part, :handle_part
-  bind :privmsg, :handle_message
+  bind :join, :handle_join
 end
 
 def handle_join user, channel
@@ -14,8 +13,4 @@ end
 
 def handle_part user, channel
   user.say "Thanks for your visit, please come again."
-end
-
-def handle_message user, channel, message
-  
 end

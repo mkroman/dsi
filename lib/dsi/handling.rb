@@ -4,8 +4,9 @@ module DSI::Handling
     case command.name
     when :PRIVMSG
       message = command.to_message
+      message.user.hostmask = command.prefix
       rext command, message.user, message.channel, message
-      send_event :message, command.to_message
+      send_event :message, message
     
     when :PING
       rext command, command.parameters[0]
@@ -26,6 +27,14 @@ module DSI::Handling
         channel.users.delete user
         rext command, user, channel
         send_event :part, user
+      end
+      
+    when :NICK
+      unless me? command.prefix
+        DSI::Channel.with(command.prefix).each do |channel, user|
+          user.hostmask.nickname = command.parameters[0]
+          rext command, user, channel, command.prefix.nickname
+        end
       end
     
     when 376, 322 # MOTD end or missing

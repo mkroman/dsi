@@ -21,16 +21,30 @@ module DSI
       end
     end
     
+    def self.with prefix
+      channels = @@channels.select{ |channel| channel.user? prefix }
+      channels.map{ |c| c.with prefix }.compact!
+    end
+    
     def say message
       @delegate.say name, message
     end
     
+    def user? prefix
+      self.users.select{ |user| user.nickname == prefix.nickname }
+    end
+    
     def with prefix
-      [self, users.select{ |u| u.nickname == prefix.nickname }.first]
+      user = @users.select{ |u| u.nickname == prefix.nickname }.first
+      if user
+        [self, user]
+      else
+        return
+      end
     end
     
     def inspect
-      %{#<#{self.class.name} @name={@name} @users=#{users.map(&:nickname)}>}
+      %{#<#{self.class.name} @name=#{@name} @users=#{users.map(&:nickname)}>}
     end
     
   end

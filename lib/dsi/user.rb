@@ -19,7 +19,7 @@ module DSI
     def nickname; hostmask.nickname end
     def username; hostmask.username end
     def realname; hostmask.realname end
-    
+    def to_s; nickname; end 
     def admin?; false end
     
     def inspect
