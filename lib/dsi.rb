@@ -15,5 +15,5 @@ require 'dsi/enhancements'
 require 'dsi/configuration'
 
 module DSI
-  VERSION = '0.0.1'
+  VERSION = '0.0.2'
 end

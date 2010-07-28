@@ -21,3 +21,12 @@ class OpenStruct
     end
   end
 end
+
+
+class Exception
+  def line
+    backtrace = exception.backtrace.first
+    backtrace = backtrace.match /^(.+?):(\d+)(|:in `(.+)')$/
+    backtrace[2].to_s
+  end
+end

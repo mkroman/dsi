@@ -1,6 +1,7 @@
 #!/usr/bin/env ruby
 # encoding: utf-8
 $:.unshift File.dirname(__FILE__) + "/lib"
+require 'dsi/extensions'
 require 'dsi'
 
 options = {
@@ -10,13 +11,24 @@ options = {
 }
 
 dsi = DSI::Client.new options
+dsi.hook do
 
-dsi.on :ready do
-  puts "DSI is now ready to join a channel."
-end
+  on :ready do
+    connection.transmit :JOIN, "#test"
+    DSI::Extensions.autoload
+  end
+  
+  on :message do |message|
+    if message.user.nickname == "mk" and message.body =~ /^\.reload/
+      DSI::Extensions.reload
+      message.channel.say "> Succesfully reloaded."
+    end
+  end
 
-dsi.on :message do |message|
-  dsi.info "#{message.user.nickname} says: #{message.body}"
+  on :message do |message|
+    "[#{message.channel.name^:bold}] #{message.user.nickname^:light_green}: #{message.body}"
+  end
+  
 end
 
 dsi.connect

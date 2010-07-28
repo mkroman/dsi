@@ -1,13 +1,14 @@
 module DSI
   class Channel
   
-    attr_accessor :name, :users
+    attr_accessor :name, :users, :delegate
     
     @@channels = []
     
-    def initialize name
-      self.name  = name
-      self.users = []
+    def initialize name, delegate
+      self.name     = name
+      self.users    = []
+      self.delegate = delegate
       
       @@channels.push self
     end
@@ -18,6 +19,10 @@ module DSI
       else
         @@channels.select{ |channel| channel.name == name }.first
       end
+    end
+    
+    def say message
+      @delegate.say name, message
     end
     
     def with prefix

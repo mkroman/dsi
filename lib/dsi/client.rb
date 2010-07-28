@@ -2,7 +2,7 @@ module DSI
   class Client
     include DSI::Logging
 
-    attr_accessor :config
+    attr_accessor :config, :connection
   
     def initialize options
       @config = Configuration.new options
@@ -23,6 +23,12 @@ module DSI
       @events[name].each{ |b| b.call(*arguments) } if @events.key? name
     end
     
+    # irc api
+    def say recipient, message
+      @connection.transmit :PRIVMSG, recipient, message
+    end
+    
     alias_method :on, :register_event
+    alias_method :hook, :instance_eval
   end
 end

@@ -1,49 +1,6 @@
-Example
--------
-    #!/usr/bin/env ruby
-    require 'dsi'
-    require 'dsi/extensions'
+DSI
+---
+Damn Small IRC is a DSL-based modular IRC bot.
 
-    options = {
-      hostname: 'irc.maero.dk',
-      nickname: 'anura'
-    }
-
-    DSI.connect options do
-
-      on :start do
-        Extensions.autoload
-      end
-
-      on :message do |user, channel, message|
-        if user.nickname == "mk" and message == ".reload"
-          Extensions.reload
-          channel.say "> Extensions successfully reloaded." ^ :cyan
-        end
-      end
-      
-      on :join do |channel, user|
-        channel.say "Welcome to #{channel.name}, #{user.nickname}!"
-      end
-      
-      on :part do |channel, user|
-        debug "Aww, #{user.nickname} left #{channel.name}!"
-      end
-
-      on :nick do |channel, user, old_nickname|
-        channel.say "#{user.nickname}: what was wrong with #{old_nickname}?"
-      end
-
-      on :ready do
-        join :maero
-      end
-
-    end
-    
-Extension Example
------------------
-    @triggers = %w{.d .t .time .date}
-
-    def init user, channel, message
-      channel.say "> #{%x{date}}" ^ :cyan
-    end
+DSI is still under development, there will be no documentation untill the
+project has hit one if its milestones.

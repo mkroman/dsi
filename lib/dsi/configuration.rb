@@ -27,5 +27,9 @@ module DSI
     def debug?
       options[:verbose] == :debug
     end
+    
+    def method_missing name, *arguments
+      @options[name]
+    end
   end
 end
