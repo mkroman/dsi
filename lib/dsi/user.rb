@@ -12,9 +12,15 @@ module DSI
       self.channel = channel
     end
     
+    def say message
+      channel.delegate.say nickname, message
+    end
+    
     def nickname; hostmask.nickname end
     def username; hostmask.username end
     def realname; hostmask.realname end
+    
+    def admin?; false end
     
     def inspect
       %{#<#{self.class.name} @nickname="#{nickname}" @channel=#{channel}>}

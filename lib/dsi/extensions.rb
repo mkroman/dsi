@@ -22,17 +22,21 @@ module DSI
     end
     
     def self.reload
-      @@extensions.each &:unload
+      @@extensions.each &:unload!
       @@extensions.clear
       self.autoload
     end
     
-    def self.run command
-      @@extensions.each { |extension| extension.run command }
+    def self.all
+      @@extensions
     end
     
-    def self.[] type
-      @@extensions.select{ |extension| extension.type == type }
+    def self.run command, *args
+      @@extensions.each { |extension| extension.run command, *args }
+    end
+    
+    def self.[] name
+      @@extensions.select{ |extension| extension.name == name }.first
     end
     
     def self.delegate= delegate

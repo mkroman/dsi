@@ -10,18 +10,15 @@ module DSI
       @extension = OpenStruct.new
       
       parse!
-      @extension.name    ||= "unknown"
+      @extension.author  ||= "unknown"
       @extension.version ||= "0.0.0"
       
-      Extensions.add self 
+      Extensions.add self  if @extension.name
     end
 
-    def run command
+    def run command, *args
       (@bindings[command.name] ||= []).each do |callback|
-        method(callback).call *case command.name
-        when :PRIVMSG then command.to_message.extension
-        else command.params
-        end
+        method(callback).call *args
       end
     rescue Exception => exception
       warn "Extension execution error: #{exception.message^:bold} on line #{exception.line^:bold}"
@@ -31,8 +28,9 @@ module DSI
       yield @extension
     end
     
-    def unload
+    def unload!
       @bindings.clear
+      Extensions.delete self
     end
     
     def bind command, callback
@@ -42,6 +40,13 @@ module DSI
     def method_added name
       module_function name
     end
+    
+    def client; Extensions.delegate end
+    def   name; @extension.name end
+    def   to_s; @extension.name end
+    def    bot; Extensions.delegate end
+    def version; @extension.version end
+    def author; @extension.author end
     
   private
     def parse!

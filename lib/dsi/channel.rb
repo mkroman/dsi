@@ -30,7 +30,7 @@ module DSI
     end
     
     def inspect
-      %{#<#{self.class.name} @name={name} @users=#{users.map(&:nickname)}>}
+      %{#<#{self.class.name} @name={@name} @users=#{users.map(&:nickname)}>}
     end
     
   end

@@ -3,9 +3,9 @@ require 'json'
 require 'open-uri'
 
 config do |x|
-  x.name    = "Google"
+  x.name    = "google"
   x.author  = "Mikkel Kroman <mk@maero.dk>"
-  x.version = "1.0.0"
+  x.version = "0.0.1"
   
   bind :privmsg, :google
 end
@@ -26,7 +26,7 @@ end
 def google user, channel, message
   return unless message.command == ".g"
   
-  title, url = search message.body.split(" ", 2)[1]
+  title, url = search message.params
   
   if title
     channel.say "> #{title} - #{url}"

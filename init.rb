@@ -17,16 +17,9 @@ dsi.hook do
     connection.transmit :JOIN, "#test"
     DSI::Extensions.autoload
   end
-  
-  on :message do |message|
-    if message.user.nickname == "mk" and message.body =~ /^\.reload/
-      DSI::Extensions.reload
-      message.channel.say "> Succesfully reloaded."
-    end
-  end
 
   on :message do |message|
-    "[#{message.channel.name^:bold}] #{message.user.nickname^:light_green}: #{message.body}"
+    debug "[#{message.channel.name^:bold}] #{message.user.nickname^:light_green}: #{message.body}"
   end
   
 end
