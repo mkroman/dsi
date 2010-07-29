@@ -50,6 +50,9 @@ module DSI::Handling
         DSI::Extensions.delegate = @delegate
       end
     end
+    
+  rescue Exception => exception
+    # do something
   end
   
 protected
