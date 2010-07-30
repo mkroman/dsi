@@ -10,6 +10,7 @@ module DSI
       @realname = options[:realname] || @username
       @password = options[:password]
       @hostname = options[:hostname] or raise "no hostname"
+      @admins   = options[:admins] || []
     end
 
     def port
@@ -22,6 +23,13 @@ module DSI
 
     def password?
       !@options[:password].nil?
+    end
+    
+    def admin? hostmask
+      @admins.each do |admin|
+        return true if Wildcard.match(admin, hostmask.to_s, true)
+      end
+      false
     end
 
     def debug?

@@ -16,11 +16,11 @@ module DSI
       channel.delegate.say nickname, message
     end
     
+    def admin?; @channel.delegate.config.admin? self.hostmask end
     def nickname; hostmask.nickname end
     def username; hostmask.username end
     def realname; hostmask.realname end
-    def to_s; nickname; end 
-    def admin?; false end
+    def to_s; nickname; end
     
     def inspect
       %{#<#{self.class.name} @nickname="#{nickname}" @channel=#{channel}>}

@@ -7,7 +7,8 @@ require 'dsi'
 options = {
   hostname: "irc.maero.dk",
   realname: "Mikkel Kroman",
-  nickname: "anura"
+  nickname: "anura",
+    admins: ['*!*@maero.dk', '*!*@*cybercity.dk']
 }
 
 dsi = DSI::Client.new options
