@@ -37,7 +37,7 @@ module DSI::Handling
         end
       end
     
-    when 376, 322 # MOTD end or missing
+    when 376, 422 # MOTD end or missing
       send_event :ready
       
     when 353 # NAMES list
