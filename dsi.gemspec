@@ -9,7 +9,7 @@ Gem::Specification.new do |s|
 
   s.author   = "Mikkel Kroman"
   s.email    = "mk@maero.dk"
-  s.homepage = "http://maero.dk/"
+  s.homepage = "http://github.com/mkroman/dsi"
   
   s.files    = Dir['lib/**/*.rb']
 end
