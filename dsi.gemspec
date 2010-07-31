@@ -11,7 +11,5 @@ Gem::Specification.new do |s|
   s.email    = "mk@maero.dk"
   s.homepage = "http://maero.dk/"
   
-  s.add_dependency 'methodphitamine', '>= 1.0.0'
-
   s.files    = Dir['lib/**/*.rb']
 end
