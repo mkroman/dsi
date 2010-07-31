@@ -23,34 +23,31 @@ module DSI
       instance
     end
     
+    def [] index
+      parameters[index]
+    end
+    
     def name= name
-      if name.is_a? String and name =~ /^\d\d\d$/u
+      if name.is_a? String and name =~ /^\d\d\d$/
         @name = name.to_i
       else
         @name = name.to_sym
       end
     end
     
-    # Messaging
-    def message?; @name == :PRIVMSG end
-    def to_message
-      raise CommandError, "Command is not a valid message" unless message?
-      channel, user = Channel[parameters[0], prefix]
-      Message.new user, channel, parameters[1]
-    end
-    
     def to_s
-      line = ''
-      line << ":#{prefix} " if prefix
-      line << name.to_s
-      
-      parameters.each_with_index do |param, index|
-        line << ' '
-        line << ':' if index == parameters.length - 1 and param =~ /[ :]/
-        line << param
+      String.new.tap do |line|
+        line << ":#{prefix} " if prefix
+        line << name.to_s
+        
+        parameters.each_with_index do |param, index|
+          line << ' '
+          line << ':' if index == parameters.length - 1 and param =~ /[ :]/
+          line << param
+        end
+        
+        line << "\r\n"
       end
-      
-      line << "\r\n"
     end
   end
 end

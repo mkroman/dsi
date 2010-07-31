@@ -1,76 +1,48 @@
-module DSI::Handling
-
-   def handle command
-    case command.name
-    when :PRIVMSG
-      message = command.to_message
-      message.user.hostmask = command.prefix
-      rext command, message.user, message.channel, message
-      send_event :message, message
+module DSI
+  module Handling
+    def handle command
+     debug "#{'<'^:green} #{command}"
     
-    when :PING
-      rext command, command.parameters[0]
-      transmit :PONG, command.parameters[0]
-      
-    when :JOIN
-      unless me? command.prefix
-        channel = DSI::Channel[command.parameters.first]
-        user    = DSI::User.new command.prefix, channel
-        channel.users.push user
-        rext command, user, channel
-        send_event :join, user
-      end
+     case command.name
+     when :PRIVMSG
+       send_event :message, command
+     
+     when :PING
+       transmit :PONG, command.parameters[0]
+       
+     when :JOIN
+       channels.with_name(command[0]).each do |channel|
+         send_event :join, channel, channel.add(command.prefix)
+       end
+     
+     when :PART
+       channels.delete_user_from(command[0], command.prefix) do |channel, user|
+         send_event :part, channel, user
+       end
+     
+     when 376, 422 # MOTD end or missing
+       send_event :ready
+       
+     when 353 # NAMES list
+       _, _, channel, nicks = command.parameters
+       synchronize_names channel, nicks
+     end
+   end
+   
+ #rescue Exception => exception
+   # do something
+ 
+  protected
+    def synchronize_names channel, nicks
+      channel = (channels.with_name(channel)[0] || Channel.new(channel, @delegate))
     
-    when :PART
-      unless me? command.prefix
-        channel, user = DSI::Channel[command.parameters.first, command.prefix]
-        channel.users.delete user
-        rext command, user, channel
-        send_event :part, user
-      end
-      
-    when :NICK
-      unless me? command.prefix
-        DSI::Channel.with(command.prefix).each do |channel, user|
-          user.hostmask.nickname = command.parameters[0]
-          rext command, user, channel, command.prefix.nickname
-        end
-      end
-    
-    when 376, 422 # MOTD end or missing
-      send_event :ready
-      
-    when 353 # NAMES list
-      _, _, channel_name, nicks = command.parameters
-      synchronize channel_name, nicks
-      
-    else
-      if DSI::Client.class_variable_defined? :@@extensions
-        rext command
-        DSI::Extensions.delegate = @delegate
+      nicks.split.each do |nick|
+        channel.add nick
       end
     end
     
-  rescue Exception => exception
-    # do something
-  end
-  
-protected
-  def synchronize channel_name, nicks
-    channel = (DSI::Channel[channel_name] || DSI::Channel.new(channel_name, @delegate))
-  
-    nicks.split.each do |nick|
-      channel.users.push DSI::User.new(nick, channel)
+    def me? prefix
+      prefix.nickname == @config.nickname
     end
-  end
-  
-  def rext *args
-    if DSI::Client.class_variable_defined? :@@extensions
-      DSI::Extensions.run *args
-    end
-  end
-  
-  def me? prefix
-    prefix.nickname == @config.nickname
   end
 end

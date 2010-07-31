@@ -10,6 +10,16 @@ class String
       OpenStruct.new server: self
     end
   end
+  
+  # Return the prefix (0 to length)
+  def prefix length = 1
+    self[0,length]
+  end
+  
+  # Return the suffix (0 to length)
+  def suffix length = 1
+    self[-length,length]
+  end
 end
 
 class OpenStruct

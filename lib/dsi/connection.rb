@@ -15,7 +15,6 @@ module DSI
       
       while line = @socket.gets
         command = Command.parse line
-        debug "#{'<'^:green} #{command}"
         handle command
       end
     end
@@ -28,8 +27,12 @@ module DSI
       @socket.puts command.to_s
     end
     
-    def send_event *args
-      @delegate.send_event *args
+    def send_event *arguments
+      @delegate.send_event *arguments
+    end
+    
+    def channels
+      @delegate.channels
     end
 
   end

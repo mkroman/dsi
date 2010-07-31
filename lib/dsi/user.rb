@@ -1,12 +1,11 @@
 module DSI
   class User
     
-    attr_accessor :hostmask # TODO: Rename this
-    attr_accessor :channel
+    attr_accessor :prefix, :channel
     
     def initialize id, channel = nil
-      self.hostmask = case id
-      when String     then "#{id}!nil@nil".to_mask
+      self.prefix = case id
+      when     String then "#{id}!nil@nil".to_mask
       when OpenStruct then id
       end
       self.channel = channel
@@ -16,14 +15,21 @@ module DSI
       channel.delegate.say nickname, message
     end
     
-    def admin?; @channel.delegate.config.admin? self.hostmask end
-    def nickname; hostmask.nickname end
-    def username; hostmask.username end
-    def realname; hostmask.realname end
     def to_s; nickname; end
+    def nickname; prefix.nickname end
+    def username; prefix.username end
+    def realname; prefix.realname end
+    def admin?; @channel.delegate.config.admin? prefix end
+    
+    def     op!; @channel.op self end
+    def  voice!; @channel.voice self end
+    def  admin!; @channel.admin self end
+    def halfop!; @channel.halfop self end
     
     def inspect
       %{#<#{self.class.name} @nickname="#{nickname}" @channel=#{channel}>}
     end
+    
+    alias_method :to_s, :nickname
   end
 end

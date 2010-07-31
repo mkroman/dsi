@@ -1,51 +1,50 @@
 module DSI
   class Channel
-  
     attr_accessor :name, :users, :delegate
-    
-    @@channels = []
     
     def initialize name, delegate
       self.name     = name
       self.users    = []
       self.delegate = delegate
       
-      @@channels.push self
+      delegate.channels.add self
     end
     
-    def self.[] name, prefix = nil
-      if prefix
-        self[name].with prefix
-      else
-        @@channels.select{ |channel| channel.name == name }.first
+    def user_with_name nickname
+      @users.select do |user|
+        user.nickname == nickname
       end
     end
     
-    def self.with prefix
-      channels = @@channels.select{ |channel| channel.user? prefix }
-      channels.map{ |c| c.with prefix }.compact!
+    def add prefix
+      user = User.new prefix, self
+      @users.<< user
+      user
+    end
+    
+    def delete nickname
+      user = user_with_name(nickname)[0]
+      @users.delete user
+      user
     end
     
     def say message
       @delegate.say name, message
     end
     
-    def user? prefix
-      self.users.select{ |user| user.nickname == prefix.nickname }
+    def mode user, mode
+      @delegate.connection.transmit :MODE, name, mode, user.nickname
     end
     
-    def with prefix
-      user = @users.select{ |u| u.nickname == prefix.nickname }.first
-      if user
-        [self, user]
-      else
-        return
-      end
-    end
+    def     op user; mode user, "+o" end
+    def  voice user; mode user, "+v" end
+    def  admin user; mode user, "+a" end
+    def halfop user; mode user, "+h" end
     
     def inspect
-      %{#<#{self.class.name} @name=#{@name} @users=#{users.map(&:nickname)}>}
+      %{#<#{self.class.name} @name="#{@name}" @users=#{users.map(&:nickname)}>}
     end
     
+    alias_method :to_s, :name
   end
 end

@@ -1,11 +1,16 @@
 config do |c|
   c.name = "testing"
   
-  bind :privmsg, :handle_message
+  bind :privmsg, :on_privmsg
 end
 
-def handle_message user, channel, message
-  if message.command == "me"
-    channel.say "> #{user.hostmask} || admin: #{user.admin?}"
+def on_privmsg user, channel, message
+  return unless message.command == ".thread"
+  
+  Thread.new do
+    sleep 5
+    channel.say "> 5 seconds later"
   end
+  
+  channel.say "> instantly"
 end

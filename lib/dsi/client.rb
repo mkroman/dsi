@@ -1,15 +1,16 @@
 module DSI
   class Client
     include DSI::Logging
-
-    attr_accessor :config, :connection
+    
+    attr_accessor :config, :connection, :channels
   
     def initialize options
-      @config = Configuration.new options
-      @events = {}
+      @config   = Configuration.new options
+      @events   = {}
+      @channels = Channels.new self
     end
     
-    # Launches a connection, which pushes a call to #connected onto the runloop.
+    # Start establishing a connection
     def connect
       @connection = Connection.new @config, self
       @connection.connect
@@ -28,7 +29,7 @@ module DSI
       @connection.transmit :PRIVMSG, recipient, message
     end
     
-    alias_method :on, :register_event
+    alias_method :on,   :register_event
     alias_method :hook, :instance_eval
   end
 end
