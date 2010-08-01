@@ -2,21 +2,24 @@ module DSI
   class Extension < Module
     include DSI::Logging
     
-    attr_accessor :filename
+    attr_accessor :filename, :extension
     
-    def initialize filename
-      @filename   = filename
-      @bindings   = {}
-      @properties = OpenStruct.new
-      self.parse!
-      @properties.author  ||= "unknown"
-      @properties.version ||= "0.0.0"
+    def initialize delegate, filename
+      @delegate  = delegate
+      @filename  = filename
+      @bindings  = {}
+      @extension = OpenStruct.new
+      parse!
+      extension.author  ||= "unknown"
+      extension.version ||= "0.0.0"
       
-      Extensions.add self if @extension.name
+      delegate.add self if extension.name
+
+      debug "#{'!'^:cyan} Loaded extension #{extension.name^:bold} (#{extension.version^:bold}) by #{extension.author^:bld}"
     end
 
-    def run command, *args
-      (@bindings[command.name] ||= []).each do |callback|
+    def run name, *args
+      (@bindings[name] ||= []).each do |callback|
         method(callback).call *args
       end
     rescue Exception
@@ -24,7 +27,7 @@ module DSI
     end
     
     def config
-      yield @config
+      yield @extension
     end
     
     def unload!
@@ -37,7 +40,7 @@ module DSI
     
     def name; @extension.name end
     def author; @extension.author end
-    def client; Extensions.delegate end
+    def client; @delegate.delegate end
     def version; @extension.version end
     
   private
@@ -49,7 +52,7 @@ module DSI
     end
     
     def path
-      File.join Extensions.path, "#{@filename}.rb"
+      File.join @delegate.path, "#{@filename}.rb"
     end
     
     def method_added name

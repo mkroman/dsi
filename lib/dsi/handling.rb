@@ -5,19 +5,36 @@ module DSI
     
      case command.name
      when :PRIVMSG
-       send_event :message, command
+       if command[0] == @config.nickname
+         message = command.to_message true
+         if message.ctcp?
+           send_event :ctcp_request, command.prefix, message
+           extensions.run :ctcp, command.prefix, message
+         else
+           send_event :private_message, command.prefix, message
+           extensions.run :privmsg, nil, command.prefix, message
+         end
+       else
+         channels.with_user_in(command[0], command.sender) do |channel, user|
+           send_event :message, user, channel, command.to_message
+           extensions.run :privmsg, user, channel, command.to_message
+         end
+       end
      
      when :PING
        transmit :PONG, command.parameters[0]
        
      when :JOIN
        channels.with_name(command[0]).each do |channel|
-         send_event :join, channel, channel.add(command.prefix)
+         user = channel.add command.prefix
+         send_event :join, user, channel
+         extensions.run :join, user, channel
        end
      
      when :PART
-       channels.delete_user_from(command[0], command.prefix) do |channel, user|
-         send_event :part, channel, user
+       channels.delete_user_from(command[0], command.prefix) do |user, channel|
+         send_event :part, user, channel
+         exetnsions.run :part, user, channel
        end
      
      when 376, 422 # MOTD end or missing
@@ -40,9 +57,9 @@ module DSI
         channel.add nick
       end
     end
-    
-    def me? prefix
-      prefix.nickname == @config.nickname
+
+    def extensions
+      @delegate.extensions
     end
   end
 end

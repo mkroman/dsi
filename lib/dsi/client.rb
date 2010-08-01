@@ -2,12 +2,13 @@ module DSI
   class Client
     include DSI::Logging
     
-    attr_accessor :config, :connection, :channels
+    attr_accessor :config, :connection, :channels, :extensions
   
     def initialize options
-      @config   = Configuration.new options
-      @events   = {}
-      @channels = Channels.new self
+      @config     = Configuration.new options
+      @events     = {}
+      @channels   = Channels.new self
+      @extensions = Extensions.new self
     end
     
     # Start establishing a connection

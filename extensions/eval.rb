@@ -7,7 +7,7 @@ config do |c|
 end
 
 def on_privmsg user, channel, message
-  return unless message.command == bot.config.nickname + ?:
+  return unless message.command == client.config.nickname + ?:
   
   if message.params.start_with? "eval "
     if user.admin?

@@ -1,14 +1,37 @@
 module DSI
   class Message
-    attr_accessor :user, :channel, :body
+    attr_accessor :body
+    Pattern = /^\x01([\w\s]+)\x01$/
   
-    def initialize user, channel, body
-      @user, @channel, @body = user, channel, body
+    def initialize body, private = false
+      @body    = body
+      @private = private
+    end
+
+    def ctcp?
+      body =~ Pattern
+    end
+
+    def ctcp
+      body[/([\w\s]+)/]
     end
     
     def private?
-      @channel.prefix != '#'
+      @private
     end
-    
+
+    def command
+      @body.split[0]
+    end
+
+    def param index
+      params.split[index]
+    end
+
+    def params
+      @body.split(" ", 2)[1]
+    end
+
+    alias_method :to_s, :body
   end
 end

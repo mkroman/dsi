@@ -15,7 +15,6 @@ module DSI
       channel.delegate.say nickname, message
     end
     
-    def to_s; nickname; end
     def nickname; prefix.nickname end
     def username; prefix.username end
     def realname; prefix.realname end

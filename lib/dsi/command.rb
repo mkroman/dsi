@@ -35,6 +35,14 @@ module DSI
       end
     end
     
+    def sender
+      prefix.nickname
+    end
+    
+    def to_message private = false
+      Message.new self[1], private
+    end
+    
     def to_s
       String.new.tap do |line|
         line << ":#{prefix} " if prefix

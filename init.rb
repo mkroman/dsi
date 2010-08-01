@@ -12,20 +12,32 @@ options = {
 
 DSI.connect options do
 
+  on :start do
+    extensions.load
+  end
+
   on :ready do
     connection.transmit :JOIN, "#test"
   end
 
-  on :message do |message|
-    # …
+  on :message do |user, channel, message|
+    debug "[#{channel.to_s^:light_green}] #{user.to_s^:bold}: #{message.body}"
+  end
+
+  on :private_message do |user, message|
+    debug "#{user.nickname^:bold}: #{message.body.inspect}"
+  end
+
+  on :ctcp_request do |user, message|
+    debug "CTCP Request from #{user.to_s^:bold}: #{message.ctcp.inspect}"
   end
   
   on :join do |channel, user|
-    debug "#{user} has joined #{channel}."
+    debug "#{user.to_s^:bold} has joined #{channel.to_s^:bold}."
   end
   
   on :part do |channel, user|
-    debug "#{user} has left #{channel}."
+    debug "#{user.to_s^:bold} has left #{channel.to_s^:bold}."
   end
   
 end

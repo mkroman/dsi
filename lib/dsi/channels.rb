@@ -20,6 +20,12 @@ module DSI
       end
     end
     
+    def with_user_in channel, nickname
+      with_name(channel).each do |channel|
+        yield channel, channel.user_with_name(nickname)
+      end
+    end
+    
     def delete_user_from channel, prefix
       with_name(channel).each do |channel|
         yield channel, channel.delete(prefix.nickname)

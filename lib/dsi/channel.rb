@@ -13,7 +13,7 @@ module DSI
     def user_with_name nickname
       @users.select do |user|
         user.nickname == nickname
-      end
+      end.first
     end
     
     def add prefix
@@ -23,7 +23,7 @@ module DSI
     end
     
     def delete nickname
-      user = user_with_name(nickname)[0]
+      user = user_with_name(nickname)
       @users.delete user
       user
     end

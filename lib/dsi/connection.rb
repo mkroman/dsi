@@ -3,7 +3,7 @@ module DSI
     include DSI::Logging, DSI::Handling
 
     def initialize config, delegate
-      @config   = config
+      @config, @delegate = config
       @delegate = delegate
     end
     
@@ -14,8 +14,7 @@ module DSI
       transmit :USER, @config.username, ?*, ?*, @config.realname
       
       while line = @socket.gets
-        command = Command.parse line
-        handle command
+        handle Command.parse(line)
       end
     end
     
