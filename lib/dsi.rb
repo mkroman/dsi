@@ -17,7 +17,7 @@ require 'dsi/enhancements'
 require 'dsi/configuration'
 
 module DSI
-  VERSION = '0.0.3'
+  VERSION = '0.0.4'
   
   def self.connect options, &p
     client = DSI::Client.new(options)
