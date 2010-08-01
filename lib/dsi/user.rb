@@ -24,6 +24,8 @@ module DSI
     def  voice!; @channel.voice self end
     def  admin!; @channel.admin self end
     def halfop!; @channel.halfop self end
+
+    def nickname= value; prefix.nickname = value end
     
     def inspect
       %{#<#{self.class.name} @nickname="#{nickname}" @channel=#{channel}>}

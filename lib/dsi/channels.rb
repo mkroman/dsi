@@ -28,7 +28,8 @@ module DSI
     
     def delete_user_from channel, prefix
       with_name(channel).each do |channel|
-        yield channel, channel.delete(prefix.nickname)
+        result = channel, channel.delete(prefix.nickname)
+        yield result if block_given?
       end
     end
     

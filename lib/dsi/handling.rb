@@ -37,6 +37,21 @@ module DSI
          send_event :part, user, channel
          extensions.run :part, user, channel
        end
+     when :NICK
+      channels.with_user(command.prefix.nickname).each do |channel|
+        user = channel.user_with_name command.prefix.nickname
+        nickname = command[0]
+        user.nickname = nickname
+        send_event :nickname, channel, user, nickname
+        extensions.run :nickshift, channel, user, nickname
+      end
+    when :QUIT
+      channels.with_user(command.prefix.nickname).each do |channel|
+        user = channel.user_with_name command.prefix.nickname
+        send_event :quit, channel, user
+        extensions.run :quit, channel, user
+        channels.delete_user_from(channel.name, user.prefix)
+      end
      
      when 376, 422 # MOTD end or missing
        send_event :ready
