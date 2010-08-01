@@ -20,7 +20,7 @@ module DSI
   VERSION = '0.0.4'
   
   def self.connect options, &p
-    client = DSI::Client.new(options)
+    client = DSI::Client.new options
     client.instance_eval &p
     client.send_event :start
     client.connect

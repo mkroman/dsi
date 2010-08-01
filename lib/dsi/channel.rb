@@ -23,7 +23,7 @@ module DSI
     end
     
     def delete nickname
-      user = user_with_name(nickname)
+      user = user_with_name nickname
       @users.delete user
       user
     end
