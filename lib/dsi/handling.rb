@@ -16,6 +16,7 @@ module DSI
          end
        else
          channels.with_user_in(command[0], command.sender) do |channel, user|
+           user.prefix = command.prefix
            send_event :message, user, channel, command.to_message
            extensions.run :privmsg, user, channel, command.to_message
          end
@@ -34,7 +35,7 @@ module DSI
      when :PART
        channels.delete_user_from(command[0], command.prefix) do |user, channel|
          send_event :part, user, channel
-         exetnsions.run :part, user, channel
+         extensions.run :part, user, channel
        end
      
      when 376, 422 # MOTD end or missing

@@ -26,7 +26,7 @@ module DSI
     def reload
       @extensions.each &:unload!
       @extensions.clear
-      autoload
+      load
     end
     
     def all

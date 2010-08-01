@@ -29,6 +29,10 @@ module DSI
     def say recipient, message
       @connection.transmit :PRIVMSG, recipient, message
     end
+
+    def notice recipient, message
+      @connection.transmit :NOTICE, recipient, message
+    end
     
     alias_method :on,   :register_event
     alias_method :hook, :instance_eval

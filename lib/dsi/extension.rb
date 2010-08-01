@@ -42,6 +42,8 @@ module DSI
     def author; @extension.author end
     def client; @delegate.delegate end
     def version; @extension.version end
+
+    alias_method :to_s, :name
     
   private
     def parse!
