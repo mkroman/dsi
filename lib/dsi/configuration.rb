@@ -13,7 +13,7 @@ module DSI
     end
 
     def port
-      @options[:port] || secure? ? 6697 : 6667
+      @options[:port] or secure? ? 6697 : 6667
     end
 
     def secure?

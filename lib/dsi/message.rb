@@ -25,7 +25,12 @@ module DSI
     end
 
     def param index
-      params.split[index]
+      params = params()
+      if params
+        params.split[index]
+      else
+        nil
+      end
     end
 
     def params

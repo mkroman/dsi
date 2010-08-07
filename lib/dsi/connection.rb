@@ -9,6 +9,7 @@ module DSI
     
     def connect
       @socket = TCPSocket.new @config.hostname, @config.port
+      debug "Connecting to #{@config.hostname^:light_green}:#{@config.port.to_s^:light_green}"
       transmit :PASS, @config.password if @config.password?
       transmit :NICK, @config.nickname
       transmit :USER, @config.username, ?*, ?*, @config.realname

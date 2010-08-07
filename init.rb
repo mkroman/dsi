@@ -7,6 +7,7 @@ options = {
   hostname: "irc.maero.dk",
   realname: "Mikkel Kroman",
   nickname: "anura",
+      port: 6668,
     admins: ['*!*@maero.dk']
 }
 
